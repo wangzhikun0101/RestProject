@@ -1,0 +1,26 @@
+1.参照标准数据库表VBAP的字段MATNR/MATWA
+在SE11里面新建一个数据结构，并参照该数据结构定义一个结构体，给结构体这2个字段赋予“100000000000000000‘并输出这2个字段
+
+2。新建一个域，域的数据类型为8位的数据类型（NUMC)
+    技术名称：ZDOMAIN_XXX(自己名字拼音的首字母）
+   并规定VALUE RANGE
+   固定值 = 10000001   短文本：张良奎
+   固定值 = 10000002   短文本：胡炜昱
+   固定值 = 10000003   短文本：张振富
+   
+   查看后台表DD01L及DD07V,检查一下自己建的域是否存在
+   
+   
+   
+   
+
+data :begin of g_str,
+      struct type zstruct_hwy,
+      end of g_str.
+
+g_str-struct-matnr = 100000000000000000.
+g_str-struct-MATWA = 100000000000000000.
+
+write:g_str-struct-matnr,
+      g_str-struct-matwa.
+

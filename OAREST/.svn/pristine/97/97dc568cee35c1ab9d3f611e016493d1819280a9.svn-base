@@ -1,0 +1,77 @@
+ 结合第三次课的自建域的值范围
+ 调用函数“DD_DOMA_GET".取自建域的固定值及文本
+ 新增加赋给表ZHR_INFORM_XXX的PERNR及NAME2字段
+ ZDEPART字段取值如下：
+           当PERNR = 10000001,ZDEPART = '信息管理部“
+           PERNR = 10000002,ZDEPART = '车间管理部‘
+           PERNR = 10000003,ZDEPART = '薪酬计量部’
+  改表的数据，输出这张表的3个字段
+  
+  查看数据库表是否已经新增加记录         
+           
+           
+
+data:itab type table of dd07v,
+      itab_wa like line of itab,
+     itab_1 type table of dd07v,
+     name type dd01l-domname,
+     tab_wa type table of zhr_inform_hwy with header line.
+
+name = 'ZDOMAIN_HWY'.
+
+call function 'DD_DOMA_GET'
+  exporting
+    domain_name   = name
+  tables
+    dd07v_tab_a   = itab
+    dd07v_tab_n   = itab_1
+  exceptions
+    illegal_value = 1
+    op_failure    = 2
+    others        = 3.
+if sy-subrc <> 0.
+  message id sy-msgid type sy-msgty number sy-msgno
+          with sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+endif.
+
+select *
+  into corresponding fields of table tab_wa
+  from zhr_inform_hwy.
+sort  tab_wa by pernr.
+loop at itab into itab_wa.
+  read table tab_wa with key pernr = itab_wa-domvalue_l binary search.
+  if sy-subrc = 0.
+    continue.
+    else.
+    case itab_wa-domvalue_l.
+      when '10000001'.
+
+        tab_wa-pernr = '10000001'.
+        tab_wa-name2 = itab_wa-ddtext.
+        tab_wa-zdepart = 'XXGLB'.
+      when '10000002'.
+
+        tab_wa-pernr = '10000002'.
+        tab_wa-name2 = itab_wa-ddtext.
+        tab_wa-zdepart = 'CJGLB'.
+      when '10000003'.
+        tab_wa-pernr = '10000003'.
+        tab_wa-name2 = itab_wa-ddtext.
+        tab_wa-zdepart = 'XCJLB'.
+      when others.
+        exit.
+    endcase.
+  endif.
+  append tab_wa.
+  modify zhr_inform_hwy from tab_wa.
+endloop.
+
+loop at tab_wa.
+  write:tab_wa-pernr,
+        tab_wa-name2,
+        tab_wa-zdepart.
+  skip.
+endloop.   
+           
+             
+ 

@@ -1,0 +1,106 @@
+1.新建数据结构，结构体1包含3个数字文本变量和1个字符串变量，3个数值文本变量的长度分别为4,2,2。
+ 继承该数据结构再新建结构体2，并增加长度为8位的数字文本变量和1个字符串变量。
+
+  结构体1的3个数字文本变量分别赋值为“2016”“08”“17”，1个字符串变量赋值为“HUAJIAN COMPANY WELCOME TO SAP WORLD!”并传值给结构体2对应的变量。
+
+  结构体2的8位数字文本变量的值由3个数字文本变量值拼接成.
+
+
+   再定义3个长度分别为4,2,2的数字文本变量，其值分别取8位数字文本变量值的前4位，5-6位，后两位
+
+   再用“年”“月”“日”拼接这3个变量的值并赋给结构体2的字符串变量
+
+   检查系统日期是否为20160817，若是，则输出结构体2的2个字符串变量
+
+2.  根据以上处理若不输出那2个字符串变量的值，寻找字符串“HUAJIAN COMPANY WELCOME TO SAP WORLD!”是否存在“SAP”字符，如果存在，其在字符串开始的位置赋给一个自定义的整数型变量znmmb,然后把其替换成“ERP”字符。
+再定义4个长度分别为10,10,10,12字符变量。
+    拆分“HUAJIAN COMPANY WELCOME TO ERP WORLD!”字符串的值并分别赋给以上定义的字符变量，并将这4个字符变量的值转换成小写.
+    再分别定义一个整数型变量及一个整数型指针变量，计算拆分的第一个字符变量的位数并赋值给定义的整数型变量。再分配该整数型变量给整数型指针变量。
+     输出拆分的4个字符变量值及整数型指针变量的值及变量znmmb的值 
+
+     
+types: begin of struct,
+  num1(4) type n,
+  num2(2) type n,
+  num3(2) type n,
+  str1 type string,
+end of struct.
+
+data gs_struct type struct.
+
+types:begin of struct_01.
+        include structure gs_struct as ss. " 继承struct
+types:num4(8) type n,
+str2 type string,
+end of struct_01.
+
+data gs_struct_01 type struct_01.
+
+gs_struct-num1 = 2016.
+gs_struct-num2 = 08.
+gs_struct-num3 = 20.
+gs_struct-str1 = 'HUAJIAN COMPANY WELCOME TO SAP WORLD!'.
+
+move-corresponding  gs_struct to gs_struct_01.   "结构体的赋值
+
+concatenate gs_struct_01-ss-num1 gs_struct_01-ss-num2 gs_struct_01-ss-num3
+into gs_struct_01-num4.     "连接字符串
+
+data:  num5(4) type n,
+      num6(2) type n,
+      num7(2) type n.
+
+num5 = gs_struct_01-num4(4).
+num6 = gs_struct_01-num4+4(2).
+num7 = gs_struct_01-num4+6(2).
+
+concatenate num5 '年' num6 '月' num7 '日' into gs_struct_01-str2. "连接字符串
+
+
+check  sy-datum eq '20160820'.
+
+data znmmb type i value 0.
+
+search gs_struct-str1 for 'SAP'.
+
+if sy-subrc eq 0.
+  znmmb = sy-fdpos.
+  replace 'SAP' with 'ERP' into gs_struct-str1.
+endif.
+
+data: char1(10) type c,
+      char2(10) type c,
+      char3(10) type c,
+      char4(12) type c.
+
+split gs_struct-str1 at ' ' into char1 char2 char3 char4 .
+
+translate char1 to lower case.   "转小写
+translate char2 to lower case.
+translate char3 to lower case.
+translate char4 to lower case.
+
+
+
+data int type i.
+field-symbols <f> type i.
+
+int = strlen( char1 ).
+
+assign int to <f>.
+write :  char1 ,
+         char2 ,
+         char3 ,
+         char4,
+         <f>,
+         znmmb.
+     
+
+   
+
+  
+
+   
+
+  
+

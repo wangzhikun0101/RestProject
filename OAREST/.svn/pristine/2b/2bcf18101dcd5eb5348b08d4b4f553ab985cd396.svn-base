@@ -1,0 +1,35 @@
+创建一个名称为“筛选条件”的选择屏幕
+  选择屏幕字段有:工厂（T001W-WERKS):必输，默认值为E100
+                 库存地点（T001L-LGORT):必输
+                 过账日期(默认为系统当前日期）：必输，并使其不接受输入，但输入域可见
+                 成本中心（CSKT-KOSTL)：
+                 物料（MARA-MATNR)  MATNR1  TO   MATNR2
+                 物料组（T023T-WGBEZ) WGBEZ1 TO  WGBEZ2
+                 
+                 
+                 
+                 
+                  
+ tables:mara,t023t.
+
+selection-screen begin of block test with frame title text-001.
+
+parameters p1 type t001w-werks obligatory default 'E100'.
+parameters p2 type t001l-lgort obligatory.
+parameters p3 type d obligatory default sy-datum modif id gg.
+parameters p4 type cskt-kostl.
+
+select-options sp1 for mara-matnr default '1010000001' to '1010000020'.
+select-options sp2 for t023t-wgbez default '原材料' to '成品物料'.
+
+selection-screen end of block test.
+
+at selection-screen output.
+
+  loop at screen.
+    if screen-group1 = 'GG'.
+      screen-input = '0'.
+      screen-invisible = '0'.
+    endif.
+    modify screen.
+  endloop.                

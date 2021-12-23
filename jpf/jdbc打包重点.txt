@@ -1,0 +1,5 @@
+首先  要 把 sqljdbc4-3.0.jar 引用jdk 环境依赖路径下的 jdbc  
+如果没有那么就复制到jdk ~jre~lib~ext 目录下
+然后发布的时候也要把 该jar 包 放在 服务上的jdk ~jre~lib~ext 目录下 
+
+然后重新运行即可 

@@ -1,0 +1,187 @@
+1.查表练习
+  确定BKPF与BSEG2张数据表的主键
+  查找这2张数据表是否有表示“公司代码”这个字段，如果有，则字段的技术名称各是什么?
+
+表BKPF 的主键是MANDT ,BUKRS ,BELNR ,GJAHR.
+表示“公司代码”的字段技术名称是 BUKRS.
+表BSRG2DE的主键是 MANDT ,BUKRS ,BELNK ,GJAHR ,BUZEI.
+表示“公司代码”的字段的技术名称是 BUKRS.
+
+2. 参照LIKP建一张不带表头的内表1，再定义一个工作区，内表中包含“交货凭证号，交货日期，总重量"3个字段
+   给工作区赋5条记录，分别是  1000000001  20160701   100
+                              1000000002  20160701   250
+                             1000000003  20160702   400
+                              1000000005  20160703   500
+                              1000000009  20160710   600
+    然后通过工作区给内表添加数据,输出内表1各字段数据，若不输出，则
+    
+    参照LIPS建一张带表头的内表2，内表中包含”交货凭证号，交货单行项目，毛重“3个字段
+    给内表这3个字段赋值，分别是  1000000001  200001  50
+                                 1000000001  200002  50
+                                 1000000002  200011  100
+                                 1000000002  200012  100
+                                 1000000002  200013  50
+                                 1000000003  200020  400
+                                 1000000005  200031  300
+                                 1000000005  200032  200
+                                 1000000009  200040  600
+ 3.  清空内表1的数据，再定义一张内表3，内表中只包含“交货凭证号”“毛重”2个字段。把内表2按照交货凭证号汇总的数据存至内表3，把内表3中的数据按照交货凭证号 = 交货凭证号
+                                                                                                    毛重 = 总重量
+     赋值给内表1.
+ 4. 再定义一张结构与内表1相同的内表4，完全复制内表1的数据，当内表4的“交货凭证号 = 1000000009时，“交货日期”字段赋系统当前日期。
+    交货凭证号 = 100000000ra5，则交货日期为系统当前日期-1.
+    交货凭证号 = 1000000003，则交货日期为系统当前日期-2.
+    交货凭证号 = 1000000002，则交货日期为系统当前日期-3.
+    交货凭证号 = 1000000001，则交货日期为系统当前日期-4.
+    
+ 5. 判断内表4的交货日期第五六位是否为'08'.如果是，则删除内表中以2结尾的交货凭证号的记录。
+ 
+ 6. 输出内表4的各字段.  
+
+7.   参考LIKP的VBELN,新建一张RANGES内表,存的值在1000000001与1000000004之间
+     输出LOW,HIGH值
+                                   
+                                                            
+
+data: itab type standard table of likp ,
+      g_itab like line of itab.
+
+g_itab-vbeln = '1000000001'.
+g_itab-lfdat = '20160701'.
+g_itab-btgew = '100'.
+append g_itab to itab.
+
+g_itab-vbeln = '1000000002'.
+g_itab-lfdat = '20160701'.
+g_itab-btgew = '250'.
+append g_itab to itab.
+
+g_itab-vbeln = '1000000003'.
+g_itab-lfdat = '20160702'.
+g_itab-btgew = '400'.
+append g_itab to itab.
+
+g_itab-vbeln = '1000000005'.
+g_itab-lfdat = '20160703'.
+g_itab-btgew = '500'.
+append g_itab to itab.
+
+g_itab-vbeln = '1000000009'.
+g_itab-lfdat = '20160710'.
+g_itab-btgew = '600'.
+append g_itab to itab.
+
+data itab_1 type standard table of lips with header line .
+
+itab_1-vbeln = '1000000001'.
+itab_1-posnr = '200001'.
+itab_1-brgew = '50'.
+append itab_1.
+
+itab_1-vbeln = '1000000001'.
+itab_1-posnr = '200002'.
+itab_1-brgew = '50'.
+append itab_1.
+
+itab_1-vbeln = '1000000002'.
+itab_1-posnr = '200011'.
+itab_1-brgew = '100'.
+append itab_1.
+
+itab_1-vbeln = '1000000002'.
+itab_1-posnr = '200012'.
+itab_1-brgew = '100'.
+append itab_1.
+
+itab_1-vbeln = '1000000002'.
+itab_1-posnr = '200013'.
+itab_1-brgew = '50'.
+append itab_1.
+
+itab_1-vbeln = '1000000003'.
+itab_1-posnr = '200020'.
+itab_1-brgew = '400'.
+append itab_1.
+
+itab_1-vbeln = '1000000005'.
+itab_1-posnr = '200031'.
+itab_1-brgew = '300'.
+append itab_1.
+
+itab_1-vbeln = '1000000005'.
+itab_1-posnr = '200032'.
+itab_1-brgew = '200'.
+append itab_1.
+
+itab_1-vbeln = '1000000009'.
+itab_1-posnr = '200040'.
+itab_1-brgew = '600'.
+append itab_1.
+
+clear itab.
+clear g_itab.
+
+types:begin of itab_2_1,
+  vbeln like lips-vbeln,
+  brgew like lips-brgew,
+end of itab_2_1.
+
+data itab_2 type standard table of itab_2_1 with header line.
+
+
+loop at itab_1.          "把表2的交货凭证和毛重汇总给表三
+  itab_2-vbeln = itab_1-vbeln.
+  itab_2-brgew = itab_1-brgew.
+  collect itab_2.
+endloop.
+
+loop at itab_2.
+  g_itab-vbeln  = itab_2-vbeln .
+  g_itab-btgew  = itab_2-brgew .
+  append g_itab to itab.
+endloop.
+
+data itab_3 like itab with header line.
+
+move itab to itab_3[].
+
+loop at itab_3.
+  case itab_3-vbeln.
+    when '1000000009'.
+      itab_3-lfdat = sy-datum.
+    when '1000000005'.
+      itab_3-lfdat = sy-datum  - 1.
+    when '1000000003'.
+      itab_3-lfdat = sy-datum  - 2.
+    when '1000000002'.
+      itab_3-lfdat = sy-datum  - 3.
+    when '1000000001'.
+      itab_3-lfdat = sy-datum  - 4.
+  endcase.
+  modify itab_3.
+
+  if itab_3-lfdat+4(2) eq '08'.
+    if itab_3-vbeln+9(1) eq '2'.
+      delete itab_3.
+    endif.
+  endif.
+endloop.
+
+*delete itab_3 where lfdat+4(2) eq '08' and vbeln+9(1) eq '2'.
+
+loop at itab_3.
+  write: itab_3-vbeln ,
+  itab_3-lfdat ,
+  itab_3-btgew .
+  skip.
+endloop.
+
+ranges:r_tab for likp-vbeln.
+r_tab-sign = 'I'.
+r_tab-low = '1000000001'.
+r_tab-option = 'BT'.
+r_tab-high = '1000000004'.
+append r_tab.
+
+write: r_tab-low,
+       r_tab-high.
